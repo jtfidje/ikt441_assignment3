@@ -71,7 +71,7 @@ classes = [ 1, # Hjemme
 cut_off = (-3)
 
 # Where in the traininglist to start training from
-train_num = (0)
+train_num = (-100)
 
 # Where in the lists to start plotting from
 plot_num = (-50)
@@ -136,6 +136,7 @@ if train_2d:
         testing_2d_2 += mapTo2D(d)
 
     if plot_data:
+        print "Creating 2D plot with raw datapoints"
         plt.subplot(2,2,1)
         plt.title("Hjemme")
         plt.plot([i[0] for i in training_2d_0][plot_num:],[i[1] for i in training_2d_0][plot_num:], "-o", color="green")
@@ -189,6 +190,7 @@ if train_2d:
 
     # Plot the different SVMs together with the data
     if plot_data:
+        print "Creating 2D plot with trained SVMs"
         h = 0.5 #Mesh step
         x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
         y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
