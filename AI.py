@@ -71,10 +71,10 @@ classes = [ 1, # Hjemme
 cut_off = (-3)
 
 # Where in the traininglist to start training from
-train_num = (-20)
+train_num = (0)
 
 # Where in the lists to start plotting from
-plot_num = (-20)
+plot_num = (-50)
 
 # Choose whether to plot the raw data or not
 plot_data = True
@@ -161,9 +161,9 @@ if train_2d:
                  training_2d_1[train_num:] + 
                  training_2d_2[train_num:])
     
-    Y = np.array([1 for i in training_2d_0][train_num:] + 
-                 [2 for i in training_2d_1][train_num:] + 
-                 [3 for i in training_2d_2][train_num:])
+    Y = np.array([0 for i in training_2d_0][train_num:] + 
+                 [1 for i in training_2d_1][train_num:] + 
+                 [2 for i in training_2d_2][train_num:])
 
     print "Starting 2D Training..."
 
@@ -217,9 +217,9 @@ if train_nd:
                  training_1[train_num:] + 
                  training_2[train_num:])
     
-    Y = np.array([1 for i in training_0][train_num:] + 
-                 [2 for i in training_1][train_num:] + 
-                 [3 for i in training_2][train_num:])
+    Y = np.array([0 for i in training_0][train_num:] + 
+                 [1 for i in training_1][train_num:] + 
+                 [2 for i in training_2][train_num:])
 
     print "Starting n-D training..."
 
