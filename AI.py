@@ -30,9 +30,13 @@ Function that plots datapoints together with
 SVM graph.
 '''
 def plotSVM(svm, n, title):
-    colors = np.array(["g" for i in training_2d_0][train_num:] + 
-                      ["r" for i in training_2d_1][train_num:] + 
-                      ["b" for i in training_2d_2][train_num:])
+    X = np.array(training_0[plot_num:] + 
+                 training_1[plot_num:] + 
+                 training_2[plot_num:])
+
+    colors = np.array(["g" for i in training_2d_0][plot_num:] + 
+                      ["r" for i in training_2d_1][plot_num:] + 
+                      ["b" for i in training_2d_2][plot_num:])
 
     plt.subplot(2, 2, n)
     Z = svm.predict(np.c_[xx.ravel(), yy.ravel()])
@@ -87,8 +91,6 @@ def write_config():
 
 # CONFIG VARS #
 
-# Choose wheter to create a results file
-write_results = True
 
 # Data file to use
 data_file = "matches_per.csv"
@@ -105,10 +107,13 @@ classes = [ 1, # Hjemme
 cut_off = (-3)
 
 # Where in the traininglist to start training from
-train_num = (-10)
+train_num = (-100)
 
 # Where in the lists to start plotting from
 plot_num = (-100)
+
+# Choose wheter to create a results file
+write_results = False
 
 # Choose whether to plot the raw data or not
 plot_data = False
@@ -122,11 +127,14 @@ train_nd = False
 # Choose whether to train using the GridSearchCV class for tuning parameters
 train_auto = True
 
+# Number of parallell jobs when using GridSearchCV
+n_jobs = 1
+
 # Choose the decision function shape
 decision_function_shape = ["ovr", "ovo"][0]
 
 # Choose the polynomial degree
-degree = 2.0
+degree = 1.0
 
 # Choose the C and gamma vars
 C = 3.0
@@ -303,29 +311,39 @@ if train_auto:
 
     parameters = [{
                     'kernel': ['rbf'], 
-                    'gamma': [1e-3, 1e-4],
-                    'C': [1, 10, 100, 1000]
+                    'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
+                    'C': [1, 10, 100, 1000],
+                    'decision_function_shape': ['ovr', 'ovo']
                   },
                   {
                     'kernel': ['linear'], 
-                    'C': [1, 10, 100, 1000]
+                    'C': [1, 10, 100, 1000],
+                    'decision_function_shape': ['ovr', 'ovo']
                   },
                   {
                     'kernel': ['sigmoid'], 
-                    'gamma': [1e-3, 1e-4],
-                    'C': [1, 10, 100, 1000]
+                    'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
+                    'C': [1, 10, 100, 1000],
+                    'decision_function_shape': ['ovr', 'ovo']
                   },
                   {
                     'kernel': ['poly'], 
-                    'gamma': [1e-3, 1e-4],
+                    'gamma': [1, 1e-1, 1e-2, 1e-3, 1e-4],
                     'C': [1, 10, 100, 1000],
-                    'degree': [1]
+                    'degree': [1],
+                    'decision_function_shape': ['ovr', 'ovo']
                   }]
 
     print "Starting Grid Search training..."
 
     svr = svm.SVC()
-    clf = grid_search.GridSearchCV(svr, parameters)
+    clf = grid_search.GridSearchCV(svr, parameters, n_jobs = n_jobs)
     _svm = clf.fit(X, Y)
-    print _svm.best_params_, "\n"
+
+    print "Parameters: "
+    for key, value in _svm.best_params_.items():
+        print "\t" + key + ":", value
+
+    print ""
+
     testSVM("Grid Search", _svm, testing_0, testing_1, testing_2)
