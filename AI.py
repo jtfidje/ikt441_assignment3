@@ -8,7 +8,7 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import svm
+from sklearn import svm, grid_search
 
 import warnings
 warnings.simplefilter("ignore")
@@ -108,25 +108,28 @@ cut_off = (-3)
 train_num = (-10)
 
 # Where in the lists to start plotting from
-plot_num = (-50)
+plot_num = (-100)
 
 # Choose whether to plot the raw data or not
-plot_data = True
+plot_data = False
 
 # Chose whether to train and test in 2D
-train_2d = True
+train_2d = False
 
 # Choose whether to train and test in n-D
-train_nd = True
+train_nd = False
+
+# Choose whether to train using the GridSearchCV class for tuning parameters
+train_auto = True
 
 # Choose the decision function shape
-decision_function_shape = ["ovr", "ovo"][1]
+decision_function_shape = ["ovr", "ovo"][0]
 
 # Choose the polynomial degree
-degree = 3.0
+degree = 2.0
 
 # Choose the C and gamma vars
-C = 1.0
+C = 3.0
 gamma = 0.5
 
 # Write config vars to file
@@ -285,3 +288,44 @@ if train_nd:
 
     polynomial_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'poly', C = C, gamma = gamma, degree = degree).fit(X, Y)
     testSVM("Polynomial", polynomial_svm, testing_0, testing_1, testing_2)
+
+if train_auto:
+    # Create numpy arrays to use for training. 
+    # X contains the features
+    # Y contains the classes
+    X = np.array(training_0[train_num:] + 
+                 training_1[train_num:] + 
+                 training_2[train_num:])
+    
+    Y = np.array([0 for i in training_0][train_num:] + 
+                 [1 for i in training_1][train_num:] + 
+                 [2 for i in training_2][train_num:])
+
+    parameters = [{
+                    'kernel': ['rbf'], 
+                    'gamma': [1e-3, 1e-4],
+                    'C': [1, 10, 100, 1000]
+                  },
+                  {
+                    'kernel': ['linear'], 
+                    'C': [1, 10, 100, 1000]
+                  },
+                  {
+                    'kernel': ['sigmoid'], 
+                    'gamma': [1e-3, 1e-4],
+                    'C': [1, 10, 100, 1000]
+                  },
+                  {
+                    'kernel': ['poly'], 
+                    'gamma': [1e-3, 1e-4],
+                    'C': [1, 10, 100, 1000],
+                    'degree': [1]
+                  }]
+
+    print "Starting Grid Search training..."
+
+    svr = svm.SVC()
+    clf = grid_search.GridSearchCV(svr, parameters)
+    _svm = clf.fit(X, Y)
+    print _svm.best_params_, "\n"
+    testSVM("Grid Search", _svm, testing_0, testing_1, testing_2)
