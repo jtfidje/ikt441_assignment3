@@ -1,3 +1,4 @@
+print ""
 import pickle
 import sys
 import random
@@ -29,12 +30,16 @@ Function that plots datapoints together with
 SVM graph.
 '''
 def plotSVM(svm, n, title):
+    colors = np.array(["g" for i in training_2d_0][train_num:] + 
+                      ["r" for i in training_2d_1][train_num:] + 
+                      ["b" for i in training_2d_2][train_num:])
+
     plt.subplot(2, 2, n)
     Z = svm.predict(np.c_[xx.ravel(), yy.ravel()])
 
     Z = Z.reshape(xx.shape)
     plt.contourf(xx, yy, Z, cmap = plt.cm.Paired, alpha = 0.8)
-    plt.scatter(X[:, 0], X[:, 1], c = Y, cmap = plt.cm.Paired)
+    plt.scatter(X[:, 0], X[:, 1], c = colors, cmap = plt.cm.Paired)
     plt.title(title)
 
 '''
@@ -61,7 +66,7 @@ def testSVM(title, svm, zero, one, two):
         f.write(title + "\n")
         f.write("Correct: " + str(numcorrect) + "\n")
         f.write("Wrong: " + str(numwrong) + "\n")
-        f.write(str(numcorrect * 100 / (numcorrect + numwrong)) + '%', "\n\n")
+        f.write(str(numcorrect * 100 / (numcorrect + numwrong)) + '%' + "\n\n")
         f.close()
 
 '''
@@ -100,13 +105,13 @@ classes = [ 1, # Hjemme
 cut_off = (-3)
 
 # Where in the traininglist to start training from
-train_num = (-50)
+train_num = (-10)
 
 # Where in the lists to start plotting from
 plot_num = (-50)
 
 # Choose whether to plot the raw data or not
-plot_data = False
+plot_data = True
 
 # Chose whether to train and test in 2D
 train_2d = True
@@ -178,19 +183,33 @@ if train_2d:
 
     if plot_data:
         print "Creating 2D plot with raw datapoints\n"
+
+        colors = np.array(["g" for x in training_2d_0][plot_num:] + 
+                          ["r" for x in training_2d_1][plot_num:] +
+                          ["b" for x in training_2d_2][plot_num:])
+
+        overlay = np.array(training_2d_0[plot_num:] + 
+                           training_2d_1[plot_num:] + 
+                           training_2d_2[plot_num:])
+
         plt.subplot(2,2,1)
         plt.title("Hjemme")
-        plt.plot([i[0] for i in training_2d_0][plot_num:],[i[1] for i in training_2d_0][plot_num:], "-o", color="green")
+        plt.plot([i[0] for i in training_2d_0][plot_num:],[i[1] for i in training_2d_0][plot_num:], "o", color = "green")
 
         plt.subplot(2,2,2)
         plt.title("Uavgjort")
-        plt.plot([i[0] for i in training_2d_1][plot_num:],[i[1] for i in training_2d_1][plot_num:], "-o", color="green")
+        plt.plot([i[0] for i in training_2d_1][plot_num:],[i[1] for i in training_2d_1][plot_num:], "o", color = "green")
 
         plt.subplot(2,2,3)
         plt.title("Borte")
-        plt.plot([i[0] for i in training_2d_2][plot_num:],[i[1] for i in training_2d_2][plot_num:], "-o", color="green")
+        plt.plot([i[0] for i in training_2d_2][plot_num:],[i[1] for i in training_2d_2][plot_num:], "o", color = "green")
+
+        plt.subplot(2,2,4)
+        plt.title("Overlay")
+        plt.scatter(overlay[:, 0], overlay[:, 1], c = colors, cmap = plt.cm.Paired, marker = "o")
 
         plt.savefig("fotball_untrained.png")
+        plt.clf()
 
     # Create numpy arrays to use for training. 
     # X contains the features
