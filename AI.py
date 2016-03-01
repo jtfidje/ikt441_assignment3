@@ -56,7 +56,7 @@ def testSVM(svm, zero, one, two):
     print numcorrect * 100 / (numcorrect + numwrong), '%', "\n"
 
 
-# VARS #
+# CONFIG VARS #
 
 data_file = "matches_per.csv"
 
@@ -64,7 +64,9 @@ data_file = "matches_per.csv"
 test_perc = 0.25
 
 # List of classes
-classes = [1, 2, 3]
+classes = [ 1, # Hjemme
+            2, # Uavgjort
+            3] # Borte
 
 # Where to cut of the data list from the end
 cut_off = (-3)
