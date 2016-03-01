@@ -128,7 +128,7 @@ train_nd = False
 train_auto = True
 
 # Number of parallell jobs when using GridSearchCV
-n_jobs = 1
+n_jobs = 40
 
 # Choose the decision function shape
 decision_function_shape = ["ovr", "ovo"][0]
@@ -137,7 +137,7 @@ decision_function_shape = ["ovr", "ovo"][0]
 degree = 1.0
 
 # Choose the C and gamma vars
-C = 3.0
+C = 1.0
 gamma = 0.5
 
 # Write config vars to file
