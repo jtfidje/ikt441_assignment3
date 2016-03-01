@@ -57,10 +57,7 @@ def testSVM(svm, zero, one, two):
 
 
 # CONFIG VARS #
-
-files = ["matches_per.csv", "iris-training.data"]
-
-data_file = files[1]
+data_file = "matches_per.csv"
 
 # Percentage of data to be used as test data
 test_perc = 0.25
@@ -71,7 +68,7 @@ classes = [ 1, # Hjemme
             3] # Borte
 
 # Where to cut of the data list from the end
-cut_off = (-1)
+cut_off = (-3)
 
 # Where in the traininglist to start training from
 train_num = (-20)
