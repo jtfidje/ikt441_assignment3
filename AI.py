@@ -71,7 +71,7 @@ classes = [ 1, # Hjemme
 cut_off = (-3)
 
 # Where in the traininglist to start training from
-train_num = (-100)
+train_num = (-50)
 
 # Where in the lists to start plotting from
 plot_num = (-50)
@@ -83,9 +83,17 @@ plot_data = True
 train_2d = True
 
 # Choose whether to train and test in n-D
-train_nd = False
+train_nd = True
 
+# Choose the decision function shape
+decision_function_shape = ["ovr", "ovo"][0]
 
+# Choose the polynomial degree
+degree = 3.0
+
+# Choose the C and gamma vars
+C = 1.0
+gamma = 0.5
 
 # Load data from files
 data = [[int(float(i)) for i in i.split(',')] for i in open(data_file, 'r').readlines() if i.strip()]
@@ -136,7 +144,7 @@ if train_2d:
         testing_2d_2 += mapTo2D(d)
 
     if plot_data:
-        print "Creating 2D plot with raw datapoints"
+        print "Creating 2D plot with raw datapoints\n"
         plt.subplot(2,2,1)
         plt.title("Hjemme")
         plt.plot([i[0] for i in training_2d_0][plot_num:],[i[1] for i in training_2d_0][plot_num:], "-o", color="green")
@@ -149,11 +157,7 @@ if train_2d:
         plt.title("Borte")
         plt.plot([i[0] for i in training_2d_2][plot_num:],[i[1] for i in training_2d_2][plot_num:], "-o", color="green")
 
-        plt.savefig("untrained.png")
-
-    # Set the C and gamma vars
-    C = 0.5
-    gamma = 0.5
+        plt.savefig("fotball_untrained.png")
 
     # Create numpy arrays to use for training. 
     # X contains the features
@@ -168,15 +172,15 @@ if train_2d:
 
     print "Starting 2D Training..."
 
-    linear_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'linear', C = C, gamma = gamma).fit(X, Y)
+    linear_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'linear', C = C, gamma = gamma).fit(X, Y)
     print "Linear"
     testSVM(linear_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
-    rbf_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'rbf', C = C, gamma = gamma).fit(X, Y)
+    rbf_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'rbf', C = C, gamma = gamma).fit(X, Y)
     print "RBF"
     testSVM(rbf_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
-    sigmoid_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'sigmoid',C = C, gamma = gamma).fit(X, Y)
+    sigmoid_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'sigmoid',C = C, gamma = gamma).fit(X, Y)
     print "Sigmoid"
     testSVM(sigmoid_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
@@ -184,7 +188,7 @@ if train_2d:
     print "NuSVC"
     testSVM(nu_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
-    polynomial_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'poly', C = C, gamma = gamma, degree = 1).fit(X,Y)
+    polynomial_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'poly', C = C, gamma = gamma, degree = degree).fit(X,Y)
     print "Polynomial"
     testSVM(polynomial_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
@@ -201,17 +205,12 @@ if train_2d:
         plotSVM(rbf_svm, 2, "RBF")
         plotSVM(sigmoid_svm, 3, "Sigmoid")
         plotSVM(polynomial_svm,  4,  "Polynomial")
-        plt.savefig("trained.png")
+        plt.savefig("fotball_trained.png")
 
 
 
 # N-Dimensions
 if train_nd:
-    
-    # Set the C and gamma vars
-    C = 1.0
-    gamma = 1.0
-
     # Create numpy arrays to use for training. 
     # X contains the features
     # Y contains the classes
@@ -225,15 +224,15 @@ if train_nd:
 
     print "Starting n-D training..."
 
-    linear_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'linear', C = C, gamma = gamma).fit(X, Y)
+    linear_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'linear', C = C, gamma = gamma).fit(X, Y)
     print "Linear"
     testSVM(linear_svm,testing_0, testing_1, testing_2)
 
-    rbf_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'rbf', C = C, gamma = gamma).fit(X, Y)
+    rbf_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'rbf', C = C, gamma = gamma).fit(X, Y)
     print "RBF"
     testSVM(rbf_svm,testing_0, testing_1, testing_2)
 
-    sigmoid_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'sigmoid', C = C, gamma = gamma).fit(X, Y)
+    sigmoid_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'sigmoid', C = C, gamma = gamma).fit(X, Y)
     print "Sigmoid"
     testSVM(sigmoid_svm,testing_0, testing_1, testing_2)
 
@@ -241,6 +240,6 @@ if train_nd:
     print "NuSVC"
     testSVM(nu_svm,testing_0, testing_1, testing_2)
 
-    polynomial_svm = svm.SVC(decision_function_shape = 'ovr', kernel = 'poly', C = C, gamma = gamma, degree = 1).fit(X, Y)
+    polynomial_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'poly', C = C, gamma = gamma, degree = degree).fit(X, Y)
     print "Polynomial"
     testSVM(polynomial_svm, testing_0, testing_1, testing_2)
