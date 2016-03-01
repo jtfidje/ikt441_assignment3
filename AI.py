@@ -40,7 +40,7 @@ def plotSVM(svm, n, title):
 '''
 Function for testing the SVM's
 '''
-def testSVM(svm, zero, one, two):
+def testSVM(title, svm, zero, one, two):
     numcorrect = 0
     numwrong = 0
     for correct, testing in ((0, zero),(1, one), (2, two)):
@@ -51,12 +51,41 @@ def testSVM(svm, zero, one, two):
             else:
                 numwrong += 1
     
+    print title
     print "Correct", numcorrect
     print "Wrong", numwrong
     print numcorrect * 100 / (numcorrect + numwrong), '%', "\n"
 
+    if write_results:
+        f = open('results.txt', 'a')
+        f.write(title + "\n")
+        f.write("Correct: " + str(numcorrect) + "\n")
+        f.write("Wrong: " + str(numwrong) + "\n")
+        f.write(str(numcorrect * 100 / (numcorrect + numwrong)) + '%', "\n\n")
+        f.close()
+
+'''
+Write config vars to file for review
+'''
+def write_config():
+    f = open('results.txt', 'w')
+    f.write("Test percentage: " + str(test_perc) + "\n")
+    f.write("Training from: " + str(train_num) + "\n")
+    f.write("Plotting from: " + str(plot_num) + "\n")
+    f.write("Decision Function Shape: " + decision_function_shape + "\n")
+    f.write("Polynomial degree: " + str(degree) + "\n")
+    f.write("C: " + str(C) + "\n")
+    f.write("Gamma: " + str(gamma) + "\n")
+    f.write("\n")
+    f.close()
+
 
 # CONFIG VARS #
+
+# Choose wheter to create a results file
+write_results = True
+
+# Data file to use
 data_file = "matches_per.csv"
 
 # Percentage of data to be used as test data
@@ -77,7 +106,7 @@ train_num = (-50)
 plot_num = (-50)
 
 # Choose whether to plot the raw data or not
-plot_data = True
+plot_data = False
 
 # Chose whether to train and test in 2D
 train_2d = True
@@ -86,7 +115,7 @@ train_2d = True
 train_nd = True
 
 # Choose the decision function shape
-decision_function_shape = ["ovr", "ovo"][0]
+decision_function_shape = ["ovr", "ovo"][1]
 
 # Choose the polynomial degree
 degree = 3.0
@@ -94,6 +123,10 @@ degree = 3.0
 # Choose the C and gamma vars
 C = 1.0
 gamma = 0.5
+
+# Write config vars to file
+if write_results:
+    write_config()
 
 # Load data from files
 data = [[int(float(i)) for i in i.split(',')] for i in open(data_file, 'r').readlines() if i.strip()]
@@ -173,24 +206,19 @@ if train_2d:
     print "Starting 2D Training..."
 
     linear_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'linear', C = C, gamma = gamma).fit(X, Y)
-    print "Linear"
-    testSVM(linear_svm, testing_2d_0, testing_2d_1, testing_2d_2)
+    testSVM("Linear", linear_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
     rbf_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'rbf', C = C, gamma = gamma).fit(X, Y)
-    print "RBF"
-    testSVM(rbf_svm, testing_2d_0, testing_2d_1, testing_2d_2)
+    testSVM("RBF", rbf_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
     sigmoid_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'sigmoid',C = C, gamma = gamma).fit(X, Y)
-    print "Sigmoid"
-    testSVM(sigmoid_svm, testing_2d_0, testing_2d_1, testing_2d_2)
+    testSVM("Sigmoid", sigmoid_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
     nu_svm = svm.NuSVC().fit(X, Y)
-    print "NuSVC"
-    testSVM(nu_svm, testing_2d_0, testing_2d_1, testing_2d_2)
+    testSVM("NuSVC", nu_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
     polynomial_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'poly', C = C, gamma = gamma, degree = degree).fit(X,Y)
-    print "Polynomial"
-    testSVM(polynomial_svm, testing_2d_0, testing_2d_1, testing_2d_2)
+    testSVM("Polynomial", polynomial_svm, testing_2d_0, testing_2d_1, testing_2d_2)
 
     # Plot the different SVMs together with the data
     if plot_data:
@@ -225,21 +253,16 @@ if train_nd:
     print "Starting n-D training..."
 
     linear_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'linear', C = C, gamma = gamma).fit(X, Y)
-    print "Linear"
-    testSVM(linear_svm,testing_0, testing_1, testing_2)
+    testSVM("Linear", linear_svm,testing_0, testing_1, testing_2)
 
     rbf_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'rbf', C = C, gamma = gamma).fit(X, Y)
-    print "RBF"
-    testSVM(rbf_svm,testing_0, testing_1, testing_2)
+    testSVM("RBF", rbf_svm,testing_0, testing_1, testing_2)
 
     sigmoid_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'sigmoid', C = C, gamma = gamma).fit(X, Y)
-    print "Sigmoid"
-    testSVM(sigmoid_svm,testing_0, testing_1, testing_2)
+    testSVM("Sigmoid", sigmoid_svm,testing_0, testing_1, testing_2)
 
     nu_svm = svm.NuSVC().fit(X, Y)
-    print "NuSVC"
-    testSVM(nu_svm,testing_0, testing_1, testing_2)
+    testSVM("NuSVC", nu_svm,testing_0, testing_1, testing_2)
 
     polynomial_svm = svm.SVC(decision_function_shape = decision_function_shape, kernel = 'poly', C = C, gamma = gamma, degree = degree).fit(X, Y)
-    print "Polynomial"
-    testSVM(polynomial_svm, testing_0, testing_1, testing_2)
+    testSVM("Polynomial", polynomial_svm, testing_0, testing_1, testing_2)
